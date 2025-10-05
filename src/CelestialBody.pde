@@ -1,3 +1,16 @@
+// ==========================================
+// CelestialBody.pde
+// 継承: なし (抽象基底クラス)
+// 説明: すべての天体の基底クラス
+// 継承ツリー:
+//   CelestialBody (このファイル)
+//   ├─ Sun
+//   └─ Planet
+//      ├─ Earth
+//      ├─ Mercury
+//      └─ Venus
+// ==========================================
+
 // 天体の基底クラス
 abstract class CelestialBody {
   protected float x, y;

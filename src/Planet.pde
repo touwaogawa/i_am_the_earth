@@ -1,3 +1,15 @@
+// ==========================================
+// Planet.pde
+// 継承: CelestialBody
+// 説明: 惑星の抽象クラス（軌道運動を実装）
+// 継承ツリー:
+//   CelestialBody
+//   └─ Planet (このファイル)
+//      ├─ Earth
+//      ├─ Mercury
+//      └─ Venus
+// ==========================================
+
 // 惑星の基底クラス
 abstract class Planet extends CelestialBody {
   protected float orbitAngle;

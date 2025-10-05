@@ -240,7 +240,7 @@ class Game {
     k = Character.toLowerCase(k);
     
     // サウンドのトグル
-    if (k == 'm') {
+    if (k == 'b') {
       SoundManager.toggleSound();
       return;
     }

@@ -1,3 +1,11 @@
+// ==========================================
+// Mercury.pde
+// 継承: Planet
+// 説明: 水星クラス（水を付与する惑星、3秒で再生成）
+// 継承ツリー:
+//   CelestialBody → Planet → Mercury (このファイル)
+// ==========================================
+
 // 水星クラス
 class Mercury extends Planet {
   boolean hasWater;

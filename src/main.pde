@@ -3,6 +3,7 @@ Game game;
 
 void setup() {
   size(800, 800);
+  SoundManager.init(this);  // サウンドシステムの初期化
   game = new Game();
 }
 

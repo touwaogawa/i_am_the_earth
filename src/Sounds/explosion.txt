@@ -1,0 +1,3 @@
+音声ファイル: explosion.wav または explosion.mp3
+説明: 地球が破壊された時の音
+推奨: 大きな爆発音

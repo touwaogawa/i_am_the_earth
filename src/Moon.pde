@@ -1,3 +1,10 @@
+// ==========================================
+// Moon.pde
+// 継承: なし (独立クラス)
+// 説明: 月クラス（Earthに所有される弾丸）
+// 関連: Earthがインスタンスを持つ
+// ==========================================
+
 // 月クラス
 class Moon {
   Earth owner;
@@ -7,6 +14,9 @@ class Moon {
   boolean isOrbiting;
   boolean isLaunched;
   boolean hasWater; // 水をまとっているか
+  boolean passedThroughSun; // 太陽を通過したか
+  boolean inGravityField; // 引力圏内にいるか
+  boolean gravityEffectPlaying; // 引力音が再生中か
   
   // チャージ関連
   boolean isCharging;
@@ -28,6 +38,9 @@ class Moon {
     this.orbitSpeed = 0.05;
     this.hasWater = false;
     this.chargeCycles = 0;
+    this.passedThroughSun = false;
+    this.inGravityField = false;
+    this.gravityEffectPlaying = false;
   }
   
   void update() {
@@ -70,11 +83,21 @@ class Moon {
     
     float size = radius + chargeLevel * 5;
     
-    // 水のエフェクト
+    // 引力を受けている時の表示（紫の輝き）
+    if (inGravityField && isLaunched) {
+      for (int i = 0; i < 3; i++) {
+        noFill();
+        stroke(150, 100, 200, 100 - i * 30);
+        strokeWeight(2);
+        ellipse(x, y, (size + i * 8) * 2, (size + i * 8) * 2);
+      }
+    }
+    
+    // 水のエフェクト（水星風の半透明の水の層）
     if (hasWater) {
-      fill(100, 150, 255, 150);
+      fill(100, 150, 255, 100);
       noStroke();
-      ellipse(x, y, size * 2.5, size * 2.5);
+      ellipse(x, y, size * 3, size * 3);
     }
     
     // 月本体
@@ -134,6 +157,9 @@ class Moon {
     vx = 0;
     vy = 0;
     hasWater = false; // 水もリセット
+    passedThroughSun = false;
+    inGravityField = false;
+    gravityEffectPlaying = false;
   }
   
   boolean checkCollision(Earth earth) {

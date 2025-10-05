@@ -1,3 +1,11 @@
+// ==========================================
+// Earth.pde
+// 継承: Planet
+// 説明: 地球クラス（プレイヤーが操作、Moonを所有）
+// 継承ツリー:
+//   CelestialBody → Planet → Earth (このファイル)
+// ==========================================
+
 // 地球クラス
 class Earth extends Planet {
   int playerId;

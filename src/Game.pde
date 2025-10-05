@@ -287,11 +287,20 @@ class Game {
     gameState = GameState.PLAYING;
     earths.clear();
     
-    // 参加したプレイヤーの地球を生成
+    // 参加したプレイヤーの数を数える
+    ArrayList<Integer> joinedPlayerIds = new ArrayList<Integer>();
     for (int i = 0; i < 4; i++) {
       if (playerJoined[i]) {
-        earths.add(new Earth(300, i, playerKeys[i]));
+        joinedPlayerIds.add(i);
       }
+    }
+    
+    // 参加したプレイヤーの地球を等間隔で生成
+    int playerCount = joinedPlayerIds.size();
+    for (int i = 0; i < playerCount; i++) {
+      int playerId = joinedPlayerIds.get(i);
+      float angleOffset = TWO_PI * i / playerCount; // 等間隔の角度オフセット
+      earths.add(new Earth(300, playerId, playerKeys[playerId], angleOffset));
     }
   }
   

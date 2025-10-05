@@ -13,8 +13,8 @@ class Earth extends Planet {
   Moon moon;
   boolean isDestroyed;
 
-  Earth(float orbitDistance, int playerId, char key) {
-    super(30, getPlayerColor(playerId), "Earth P" + (playerId + 1), orbitDistance, 0.01, TWO_PI * playerId / 4);
+  Earth(float orbitDistance, int playerId, char key, float angleOffset) {
+    super(30, getPlayerColor(playerId), "Earth P" + (playerId + 1), orbitDistance, 0.01, angleOffset);
     this.playerId = playerId;
     this.controlKey = key;
     this.isDestroyed = false;

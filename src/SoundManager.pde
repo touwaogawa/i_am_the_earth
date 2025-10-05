@@ -1,8 +1,11 @@
-// サウンドマネージャークラス（シンプルな音声システム）
+// サウンドマネージャークラス
 import processing.sound.*;
 
 static class SoundManager {
   static boolean soundEnabled = true;
+  static boolean soundInitialized = false;
+  
+  // サウンドファイル
   static SoundFile launchSound;
   static SoundFile hitSound;
   static SoundFile explosionSound;
@@ -11,109 +14,54 @@ static class SoundManager {
   static SoundFile gravitySound;
   
   static void init(PApplet app) {
-    // 音声ファイルの読み込み(ファイルが存在する場合のみ)
     try {
-      launchSound = loadSoundSafe(app, "Sounds/launch.mp3", "Sounds/launch.wav");
+      // サウンドファイルの読み込み
+      String soundPath = "Sounds/";
+      
+      // 各サウンドファイルを読み込み(ファイルが存在する場合のみ)
+      try { launchSound = new SoundFile(app, soundPath + "launch.mp3"); } catch (Exception e) { println("launch.mp3 not found"); }
+      try { hitSound = new SoundFile(app, soundPath + "hit.mp3"); } catch (Exception e) { println("hit.mp3 not found"); }
+      try { explosionSound = new SoundFile(app, soundPath + "explosion.mp3"); } catch (Exception e) { println("explosion.mp3 found"); }
+      try { burnSound = new SoundFile(app, soundPath + "burn.mp3"); } catch (Exception e) { println("burn.mp3 not found"); }
+      try { splashSound = new SoundFile(app, soundPath + "splash.mp3"); } catch (Exception e) { println("splash.mp3 not found"); }
+      try { gravitySound = new SoundFile(app, soundPath + "gravity.mp3"); } catch (Exception e) { println("gravity.mp3 not found"); }
+      
+      soundInitialized = true;
+      println("Sound system initialized");
     } catch (Exception e) {
-      println("Launch sound not found");
-    }
-    
-    try {
-      hitSound = loadSoundSafe(app, "Sounds/hit.mp3", "Sounds/hit.wav");
-    } catch (Exception e) {
-      println("Hit sound not found");
-    }
-    
-    try {
-      explosionSound = loadSoundSafe(app, "Sounds/explosion.mp3", "Sounds/explosion.wav");
-    } catch (Exception e) {
-      println("Explosion sound not found");
-    }
-    
-    try {
-      burnSound = loadSoundSafe(app, "Sounds/burn.mp3", "Sounds/burn.wav");
-    } catch (Exception e) {
-      println("Burn sound not found");
-    }
-    
-    try {
-      splashSound = loadSoundSafe(app, "Sounds/splash.mp3", "Sounds/splash.wav");
-    } catch (Exception e) {
-      println("Splash sound not found");
-    }
-    
-    try {
-      gravitySound = loadSoundSafe(app, "Sounds/gravity.mp3", "Sounds/gravity.wav");
-    } catch (Exception e) {
-      println("Gravity sound not found");
-    }
-  }
-  
-  // mp3またはwavファイルを安全に読み込む
-  static SoundFile loadSoundSafe(PApplet app, String path1, String path2) {
-    try {
-      return new SoundFile(app, path1);
-    } catch (Exception e1) {
-      try {
-        return new SoundFile(app, path2);
-      } catch (Exception e2) {
-        throw new RuntimeException("Sound file not found: " + path1 + " or " + path2);
-      }
+      println("Sound library not available: " + e.getMessage());
+      soundInitialized = false;
     }
   }
   
   static void playLaunch() {
-    if (!soundEnabled) return;
-    if (launchSound != null) {
-      launchSound.play();
-    } else {
-      println("♪ Launch!");
-    }
+    if (!soundEnabled || !soundInitialized) return;
+    if (launchSound != null) launchSound.play();
   }
   
   static void playHit() {
-    if (!soundEnabled) return;
-    if (hitSound != null) {
-      hitSound.play();
-    } else {
-      println("♪ Hit!");
-    }
+    if (!soundEnabled || !soundInitialized) return;
+    if (hitSound != null) hitSound.play();
   }
   
   static void playExplosion() {
-    if (!soundEnabled) return;
-    if (explosionSound != null) {
-      explosionSound.play();
-    } else {
-      println("♪ Explosion!");
-    }
+    if (!soundEnabled || !soundInitialized) return;
+    if (explosionSound != null) explosionSound.play();
   }
   
   static void playBurn() {
-    if (!soundEnabled) return;
-    if (burnSound != null) {
-      burnSound.play();
-    } else {
-      println("♪ Burn!");
-    }
+    if (!soundEnabled || !soundInitialized) return;
+    if (burnSound != null) burnSound.play();
   }
   
   static void playWaterSplash() {
-    if (!soundEnabled) return;
-    if (splashSound != null) {
-      splashSound.play();
-    } else {
-      println("♪ Splash!");
-    }
+    if (!soundEnabled || !soundInitialized) return;
+    if (splashSound != null) splashSound.play();
   }
   
   static void playGravityEffect() {
-    if (!soundEnabled) return;
-    if (gravitySound != null) {
-      gravitySound.play();
-    } else {
-      println("♪ Gravity Pull!");
-    }
+    if (!soundEnabled || !soundInitialized) return;
+    if (gravitySound != null) gravitySound.play();
   }
   
   static void toggleSound() {

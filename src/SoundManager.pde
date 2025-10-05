@@ -114,6 +114,7 @@ static class SoundManager {
     if (!soundEnabled || !soundInitialized) return;
     stopAllBGM();
     if (titleBGM != null) {
+      titleBGM.amp(0.3); // BGMの音量は30%に設定
       titleBGM.loop();
     }
   }
@@ -122,6 +123,7 @@ static class SoundManager {
     if (!soundEnabled || !soundInitialized) return;
     stopAllBGM();
     if (battleBGM != null) {
+      battleBGM.amp(0.3); // BGMの音量は30%に設定
       battleBGM.loop();
     }
   }
@@ -130,6 +132,7 @@ static class SoundManager {
     if (!soundEnabled || !soundInitialized) return;
     stopAllBGM();
     if (resultJingle != null) {
+      resultJingle.amp(0.3); // ジングルの音量は30%に設定
       resultJingle.play();
     }
   }

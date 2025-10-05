@@ -19,6 +19,10 @@ class Game {
   float screenShakeX, screenShakeY;
   int shakeTimer;
   
+  // リザルト画面用カメラ
+  float cameraX, cameraY, cameraZoom;
+  float targetCameraX, targetCameraY, targetCameraZoom;
+  
   Game() {
     sun = new Sun(width/2, height/2, 80);
     mercury = new Mercury();
@@ -39,6 +43,14 @@ class Game {
     screenShakeY = 0;
     shakeTimer = 0;
     
+    // カメラの初期化
+    cameraX = width / 2;
+    cameraY = height / 2;
+    cameraZoom = 1.0;
+    targetCameraX = width / 2;
+    targetCameraY = height / 2;
+    targetCameraZoom = 1.0;
+    
     // タイトルBGMを再生
     SoundManager.playTitleBGM();
   }
@@ -48,6 +60,8 @@ class Game {
       updateTitle();
     } else if (gameState == GameState.PLAYING) {
       updatePlaying();
+    } else if (gameState == GameState.GAME_OVER) {
+      updateGameOver();
     }
     
     // 画面振動の減衰
@@ -63,6 +77,13 @@ class Game {
   
   void updateTitle() {
     // タイトル画面では何もしない
+    // カメラをデフォルトにリセット
+    targetCameraX = width / 2;
+    targetCameraY = height / 2;
+    targetCameraZoom = 1.0;
+    cameraX = targetCameraX;
+    cameraY = targetCameraY;
+    cameraZoom = targetCameraZoom;
   }
   
   void updatePlaying() {
@@ -147,19 +168,55 @@ class Game {
     }
   }
   
+  void updateGameOver() {
+    // 勝利したプレイヤーの地球を追従
+    if (winner >= 0 && earths.size() == 1) {
+      Earth winnerEarth = earths.get(0);
+      targetCameraX = winnerEarth.x;
+      targetCameraY = winnerEarth.y;
+      targetCameraZoom = 2.5; // 2.5倍にズームアップ
+      
+      // 勝利者の地球も更新し続ける(公転し続ける)
+      winnerEarth.update();
+    } else {
+      // ドローの場合は中央に戻す
+      targetCameraX = width / 2;
+      targetCameraY = height / 2;
+      targetCameraZoom = 1.0;
+    }
+    
+    // カメラを滑らかに移動
+    cameraX += (targetCameraX - cameraX) * 0.05;
+    cameraY += (targetCameraY - cameraY) * 0.05;
+    cameraZoom += (targetCameraZoom - cameraZoom) * 0.05;
+  }
+  
   void render() {
     background(20);
     
-    // 画面振動を適用
+    // 画面振動とカメラ変換を適用
     pushMatrix();
     translate(screenShakeX, screenShakeY);
     
+    // カメラの中心を画面中央に設定
+    translate(width / 2, height / 2);
+    scale(cameraZoom);
+    translate(-cameraX, -cameraY);
+    
     if (gameState == GameState.TITLE) {
+      // タイトル画面はカメラ変換をキャンセル
+      translate(cameraX, cameraY);
+      scale(1.0 / cameraZoom);
+      translate(-width / 2, -height / 2);
       renderTitle();
     } else if (gameState == GameState.PLAYING || gameState == GameState.GAME_OVER) {
       renderGame();
       
       if (gameState == GameState.GAME_OVER) {
+        // ゲームオーバー画面はカメラ変換をキャンセル
+        translate(cameraX, cameraY);
+        scale(1.0 / cameraZoom);
+        translate(-width / 2, -height / 2);
         renderGameOver();
       }
     }
@@ -199,6 +256,10 @@ class Game {
       fill(255, 255, 0);
       textSize(32);
       text("Press SPACE to Start!", width/2, height - 100);
+      
+      // SPACEキーについてのやかましい説明（吹き出し風）
+      drawSpeechBubble(width/2 + 180, height - 200, 280, 80, 
+        "This space is not the space\nin the universe, but the\nspace on the keyboard.");
     } else {
       fill(150);
       textSize(20);
@@ -332,11 +393,55 @@ class Game {
     venus = new Venus();
     particleManager = new ParticleManager();
     
+    // カメラをリセット
+    cameraX = width / 2;
+    cameraY = height / 2;
+    cameraZoom = 1.0;
+    targetCameraX = width / 2;
+    targetCameraY = height / 2;
+    targetCameraZoom = 1.0;
+    
     // タイトルBGMを再生
     SoundManager.playTitleBGM();
     
     for (int i = 0; i < 4; i++) {
       playerJoined[i] = false;
     }
+  }
+  
+  // 吹き出しを描画する補助関数
+  void drawSpeechBubble(float x, float y, float w, float h, String message) {
+    pushStyle();
+    
+    // 吹き出しの本体（角丸四角形）
+    fill(255, 255, 255, 240);
+    stroke(0);
+    strokeWeight(2);
+    rectMode(CENTER);
+    rect(x, y, w, h, 10);
+    
+    // 吹き出しの三角形（しっぽ）
+    noStroke();
+    fill(255, 255, 255, 240);
+    triangle(
+      x - w/2 + 20, y + h/2,        // 吹き出しの底辺左側
+      x - w/2, y + h/2,              // 吹き出しの底辺端
+      x - w/2 - 30, y + h/2 + 30    // 指し示す先（左下）
+    );
+    
+    // 三角形の縁取り
+    stroke(0);
+    strokeWeight(2);
+    line(x - w/2 + 20, y + h/2, x - w/2 - 30, y + h/2 + 30);
+    line(x - w/2, y + h/2, x - w/2 - 30, y + h/2 + 30);
+    
+    // テキスト描画
+    fill(0);
+    textAlign(CENTER, CENTER);
+    textSize(15);
+    text(message, x, y);
+    
+    rectMode(CORNER); // デフォルトに戻す
+    popStyle();
   }
 }

@@ -41,7 +41,7 @@ class Venus extends Planet {
     stroke(0);
     strokeWeight(2);
     textAlign(CENTER, CENTER);
-    textSize(12);
+    textSize(15);
     text(hitCount + "/" + maxHits, x, y);
     
     // 名前表示

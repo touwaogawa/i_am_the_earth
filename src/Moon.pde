@@ -24,8 +24,8 @@ class Moon {
   int chargeLevel; // 0~3
   float orbitAngle;
   float orbitSpeed;
-  float chargeCycles; // チャージ中の周回数
-  float chargeStartAngle; // チャージ開始時の角度
+  int chargeStartTime; // チャージ開始時刻（ミリ秒）
+  float chargeDuration; // 1レベルあたりのチャージ時間（ミリ秒）
   
   Moon(Earth owner) {
     this.owner = owner;
@@ -38,8 +38,8 @@ class Moon {
     this.orbitAngle = 0;
     this.orbitSpeed = 0.05;
     this.hasWater = false;
-    this.chargeCycles = 0;
-    this.chargeStartAngle = 0;
+    this.chargeStartTime = 0;
+    this.chargeDuration = 1000; // 1秒で1レベル（1000ミリ秒）
     this.passedThroughSun = false;
     this.inGravityField = false;
     this.gravityEffectPlaying = false;
@@ -54,38 +54,24 @@ class Moon {
       x = owner.x + cos(orbitAngle) * distance;
       y = owner.y + sin(orbitAngle) * distance;
       
-      // チャージ中は周回ごとにサイズアップ
+      // チャージ中は時間経過でサイズアップ
       if (isCharging) {
-        // チャージ開始位置からの経過角度を計算
-        float angleProgress = orbitAngle - chargeStartAngle;
-        if (angleProgress < 0) angleProgress += TWO_PI;
+        // チャージ開始からの経過時間を計算（ミリ秒）
+        int elapsedTime = millis() - chargeStartTime;
         
-        // 前回の経過角度
-        float prevProgress = prevAngle - chargeStartAngle;
-        if (prevProgress < 0) prevProgress += TWO_PI;
+        // 経過時間から現在のチャージレベルを計算（最大3）
+        int prevLevel = chargeLevel;
+        chargeLevel = min(3, (int)(elapsedTime / chargeDuration));
         
-        // チャージ開始位置を一周通過したかチェック
-        if (prevProgress < TWO_PI && angleProgress >= TWO_PI) {
-          chargeCycles++;
-          if (chargeCycles <= 3) {
-            int prevLevel = chargeLevel;
-            chargeLevel = (int)chargeCycles;
-            // レベルが上がったら成長音を再生
-            if (chargeLevel > prevLevel) {
-              SoundManager.playGrow();
-            }
-          }
-          // チャージ開始位置を更新（次の周回のため）
-          chargeStartAngle = orbitAngle;
+        // レベルが上がったら成長音を再生
+        if (chargeLevel > prevLevel) {
+          SoundManager.playGrow();
         }
       }
       
       // 角度を正規化
       if (orbitAngle >= TWO_PI) {
         orbitAngle -= TWO_PI;
-      }
-      if (chargeStartAngle >= TWO_PI) {
-        chargeStartAngle -= TWO_PI;
       }
     } else if (isLaunched) {
       // 発射後の移動
@@ -140,13 +126,14 @@ class Moon {
     }
   }
   
+  // チャージ開始（ボタンを押した瞬間に呼ばれる）
   void startCharging() {
     if (isOrbiting && !isCharging) {
       isCharging = true;
       chargeJustStarted = true;
-      chargeCycles = 0;
       chargeLevel = 0;
-      chargeStartAngle = orbitAngle; // チャージ開始位置を記録
+      // ボタンを押した瞬間の時刻を記録
+      chargeStartTime = millis();
     }
   }
   
@@ -174,7 +161,7 @@ class Moon {
     isCharging = false;
     chargeJustStarted = false;
     chargeLevel = 0;
-    chargeCycles = 0;
+    chargeStartTime = 0;
     orbitAngle = 0;
     vx = 0;
     vy = 0;

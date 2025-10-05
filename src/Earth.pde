@@ -12,12 +12,14 @@ class Earth extends Planet {
   char controlKey;
   Moon moon;
   boolean isDestroyed;
+  boolean isKeyPressed; // キーが押されているか
 
   Earth(float orbitDistance, int playerId, char key, float angleOffset) {
     super(30, getPlayerColor(playerId), "Earth P" + (playerId + 1), orbitDistance, 0.01, angleOffset);
     this.playerId = playerId;
     this.controlKey = key;
     this.isDestroyed = false;
+    this.isKeyPressed = false;
     
     // 月を生成
     moon = new Moon(this);
@@ -29,6 +31,12 @@ class Earth extends Planet {
     
     // 月を更新
     moon.update();
+    
+    // 月が復活してオービット中で、キーが押されていて、まだチャージしていない場合
+    if (moon.isOrbiting && !moon.isLaunched && isKeyPressed && !moon.isCharging) {
+      moon.startCharging();
+      orbitSpeed = 0.01 * 0.3; // チャージ中は公転が遅くなる
+    }
   }
   
   void render() {
@@ -72,14 +80,20 @@ class Earth extends Planet {
   
   void handleKeyPressed(char k) {
     if (k == controlKey) {
-      moon.startCharging();
-      orbitSpeed = 0.01 * 0.3; // チャージ中は公転が遅くなる
+      isKeyPressed = true;
+      if (moon.isOrbiting && !moon.isCharging) {
+        moon.startCharging();
+        orbitSpeed = 0.01 * 0.3; // チャージ中は公転が遅くなる
+      }
     }
   }
   
   void handleKeyReleased(char k) {
     if (k == controlKey) {
-      moon.launch();
+      isKeyPressed = false;
+      if (moon.isCharging) {
+        moon.launch();
+      }
       orbitSpeed = 0.01; // 公転速度を戻す
     }
   }

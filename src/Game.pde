@@ -38,6 +38,9 @@ class Game {
     screenShakeX = 0;
     screenShakeY = 0;
     shakeTimer = 0;
+    
+    // タイトルBGMを再生
+    SoundManager.playTitleBGM();
   }
   
   void update() {
@@ -127,9 +130,18 @@ class Game {
     
     // 勝利判定
     if (earths.size() == 1) {
+      if (gameState != GameState.GAME_OVER) {
+        // 初めてゲームオーバーになった時だけ効果音を鳴らす
+        SoundManager.playApplause();
+        SoundManager.playResultJingle();
+      }
       gameState = GameState.GAME_OVER;
       winner = earths.get(0).playerId;
     } else if (earths.size() == 0) {
+      if (gameState != GameState.GAME_OVER) {
+        // 初めてゲームオーバーになった時だけ効果音を鳴らす
+        SoundManager.playResultJingle();
+      }
       gameState = GameState.GAME_OVER;
       winner = -1;
     }
@@ -249,7 +261,10 @@ class Game {
       // プレイヤー参加処理
       for (int i = 0; i < playerKeys.length; i++) {
         if (k == playerKeys[i]) {
-          playerJoined[i] = true;
+          if (!playerJoined[i]) {
+            playerJoined[i] = true;
+            SoundManager.playJoin();
+          }
         }
       }
       
@@ -261,10 +276,12 @@ class Game {
         }
         
         if (joinedCount >= 2) {
+          SoundManager.playStart();
           startGame();
         }
       }
     } else if (gameState == GameState.GAME_OVER && k == 'r') {
+      SoundManager.playRetry();
       restart();
     } else if (gameState == GameState.PLAYING) {
       for (Earth earth : earths) {
@@ -286,6 +303,9 @@ class Game {
   void startGame() {
     gameState = GameState.PLAYING;
     earths.clear();
+    
+    // バトルBGMを再生
+    SoundManager.playBattleBGM();
     
     // 参加したプレイヤーの数を数える
     ArrayList<Integer> joinedPlayerIds = new ArrayList<Integer>();
@@ -311,6 +331,9 @@ class Game {
     mercury = new Mercury();
     venus = new Venus();
     particleManager = new ParticleManager();
+    
+    // タイトルBGMを再生
+    SoundManager.playTitleBGM();
     
     for (int i = 0; i < 4; i++) {
       playerJoined[i] = false;

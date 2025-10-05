@@ -71,11 +71,14 @@ class Mercury extends Planet {
   }
   
   void giveWater(Moon moon) {
-    if (hasWater && !moon.hasWater) {
-      moon.hasWater = true;
+    // 水星に水がある場合のみ、水を付与
+    if (hasWater) {
+      if (!moon.hasWater) {
+        moon.hasWater = true;
+        SoundManager.playWaterSplash();
+      }
       hasWater = false;
       waterTimer = 0; // タイマーリセット
-      SoundManager.playWaterSplash();
     }
   }
 }

@@ -58,7 +58,12 @@ class Moon {
         if (prevAngle < TWO_PI && orbitAngle >= TWO_PI) {
           chargeCycles++;
           if (chargeCycles <= 3) {
+            int prevLevel = chargeLevel;
             chargeLevel = (int)chargeCycles;
+            // レベルが上がったら成長音を再生
+            if (chargeLevel > prevLevel) {
+              SoundManager.playGrow();
+            }
           }
         }
         // 角度を正規化

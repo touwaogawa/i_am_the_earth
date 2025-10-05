@@ -12,6 +12,16 @@ static class SoundManager {
   static SoundFile burnSound;
   static SoundFile splashSound;
   static SoundFile gravitySound;
+  static SoundFile joinSound;
+  static SoundFile startSound;
+  static SoundFile retrySound;
+  static SoundFile growSound;
+  static SoundFile applauseSound;
+  
+  // BGM
+  static SoundFile titleBGM;
+  static SoundFile battleBGM;
+  static SoundFile resultJingle;
   
   static void init(PApplet app) {
     try {
@@ -25,6 +35,16 @@ static class SoundManager {
       try { burnSound = new SoundFile(app, soundPath + "burn.mp3"); } catch (Exception e) { println("burn.mp3 not found"); }
       try { splashSound = new SoundFile(app, soundPath + "splash.mp3"); } catch (Exception e) { println("splash.mp3 not found"); }
       try { gravitySound = new SoundFile(app, soundPath + "gravity.mp3"); } catch (Exception e) { println("gravity.mp3 not found"); }
+      try { joinSound = new SoundFile(app, soundPath + "join.mp3"); } catch (Exception e) { println("join.mp3 not found"); }
+      try { startSound = new SoundFile(app, soundPath + "start.mp3"); } catch (Exception e) { println("start.mp3 not found"); }
+      try { retrySound = new SoundFile(app, soundPath + "retry.mp3"); } catch (Exception e) { println("retry.mp3 not found"); }
+      try { growSound = new SoundFile(app, soundPath + "grow.mp3"); } catch (Exception e) { println("grow.mp3 not found"); }
+      try { applauseSound = new SoundFile(app, soundPath + "applause.mp3"); } catch (Exception e) { println("applause.mp3 not found"); }
+      
+      // BGMを読み込み
+      try { titleBGM = new SoundFile(app, soundPath + "title_bgm.mp3"); } catch (Exception e) { println("title_bgm.mp3 not found"); }
+      try { battleBGM = new SoundFile(app, soundPath + "battle_bgm.mp3"); } catch (Exception e) { println("battle_bgm.mp3 not found"); }
+      try { resultJingle = new SoundFile(app, soundPath + "result_jingle.mp3"); } catch (Exception e) { println("result_jingle.mp3 not found"); }
       
       soundInitialized = true;
       println("Sound system initialized");
@@ -62,6 +82,62 @@ static class SoundManager {
   static void playGravityEffect() {
     if (!soundEnabled || !soundInitialized) return;
     if (gravitySound != null) gravitySound.play();
+  }
+  
+  static void playJoin() {
+    if (!soundEnabled || !soundInitialized) return;
+    if (joinSound != null) joinSound.play();
+  }
+  
+  static void playStart() {
+    if (!soundEnabled || !soundInitialized) return;
+    if (startSound != null) startSound.play();
+  }
+  
+  static void playRetry() {
+    if (!soundEnabled || !soundInitialized) return;
+    if (retrySound != null) retrySound.play();
+  }
+  
+  static void playGrow() {
+    if (!soundEnabled || !soundInitialized) return;
+    if (growSound != null) growSound.play();
+  }
+  
+  static void playApplause() {
+    if (!soundEnabled || !soundInitialized) return;
+    if (applauseSound != null) applauseSound.play();
+  }
+  
+  // BGM制御
+  static void playTitleBGM() {
+    if (!soundEnabled || !soundInitialized) return;
+    stopAllBGM();
+    if (titleBGM != null) {
+      titleBGM.loop();
+    }
+  }
+  
+  static void playBattleBGM() {
+    if (!soundEnabled || !soundInitialized) return;
+    stopAllBGM();
+    if (battleBGM != null) {
+      battleBGM.loop();
+    }
+  }
+  
+  static void playResultJingle() {
+    if (!soundEnabled || !soundInitialized) return;
+    stopAllBGM();
+    if (resultJingle != null) {
+      resultJingle.play();
+    }
+  }
+  
+  static void stopAllBGM() {
+    if (titleBGM != null) titleBGM.stop();
+    if (battleBGM != null) battleBGM.stop();
+    if (resultJingle != null) resultJingle.stop();
   }
   
   static void toggleSound() {

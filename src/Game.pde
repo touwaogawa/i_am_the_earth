@@ -132,6 +132,8 @@ class Game {
       for (int j = 0; j < earths.size(); j++) {
         if (i != j) {
           Earth other = earths.get(j);
+          
+          // 発射済みの月が地球に当たった
           if (earth.moon.checkCollision(other)) {
             other.destroy(particleManager);
             earth.moon.reset();
@@ -139,6 +141,22 @@ class Game {
             // ヒットストップと画面振動
             hitStopTimer = 10;
             shakeTimer = 20;
+          }
+          
+          // 月同士の衝突判定（どちらも破壊）
+          if (earth.moon.checkCollisionWithMoon(other.moon)) {
+            earth.moon.reset();
+            other.moon.reset();
+            
+            // 衝突地点でエフェクト
+            float collisionX = (earth.moon.x + other.moon.x) / 2;
+            float collisionY = (earth.moon.y + other.moon.y) / 2;
+            particleManager.createExplosion(collisionX, collisionY, color(255, 200, 100), 15);
+            SoundManager.playHit();
+            
+            // ヒットストップと画面振動
+            hitStopTimer = 8;
+            shakeTimer = 15;
           }
         }
       }
@@ -233,7 +251,7 @@ class Game {
     
     // プレイヤー参加状態
     textSize(24);
-    text("Press key to join:", width/2, height/2 - 60);
+    // text("Press key to join:", width/2, height/2 - 60);
     
     for (int i = 0; i < 4; i++) {
       float y = height/2 + i * 40;

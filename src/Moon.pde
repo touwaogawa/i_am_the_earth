@@ -25,6 +25,7 @@ class Moon {
   float orbitAngle;
   float orbitSpeed;
   float chargeCycles; // チャージ中の周回数
+  float chargeStartAngle; // チャージ開始時の角度
   
   Moon(Earth owner) {
     this.owner = owner;
@@ -38,6 +39,7 @@ class Moon {
     this.orbitSpeed = 0.05;
     this.hasWater = false;
     this.chargeCycles = 0;
+    this.chargeStartAngle = 0;
     this.passedThroughSun = false;
     this.inGravityField = false;
     this.gravityEffectPlaying = false;
@@ -54,8 +56,16 @@ class Moon {
       
       // チャージ中は周回ごとにサイズアップ
       if (isCharging) {
-        // 1周したかチェック
-        if (prevAngle < TWO_PI && orbitAngle >= TWO_PI) {
+        // チャージ開始位置からの経過角度を計算
+        float angleProgress = orbitAngle - chargeStartAngle;
+        if (angleProgress < 0) angleProgress += TWO_PI;
+        
+        // 前回の経過角度
+        float prevProgress = prevAngle - chargeStartAngle;
+        if (prevProgress < 0) prevProgress += TWO_PI;
+        
+        // チャージ開始位置を一周通過したかチェック
+        if (prevProgress < TWO_PI && angleProgress >= TWO_PI) {
           chargeCycles++;
           if (chargeCycles <= 3) {
             int prevLevel = chargeLevel;
@@ -65,11 +75,17 @@ class Moon {
               SoundManager.playGrow();
             }
           }
+          // チャージ開始位置を更新（次の周回のため）
+          chargeStartAngle = orbitAngle;
         }
-        // 角度を正規化
-        if (orbitAngle >= TWO_PI) {
-          orbitAngle -= TWO_PI;
-        }
+      }
+      
+      // 角度を正規化
+      if (orbitAngle >= TWO_PI) {
+        orbitAngle -= TWO_PI;
+      }
+      if (chargeStartAngle >= TWO_PI) {
+        chargeStartAngle -= TWO_PI;
       }
     } else if (isLaunched) {
       // 発射後の移動
@@ -130,6 +146,7 @@ class Moon {
       chargeJustStarted = true;
       chargeCycles = 0;
       chargeLevel = 0;
+      chargeStartAngle = orbitAngle; // チャージ開始位置を記録
     }
   }
   
@@ -168,10 +185,20 @@ class Moon {
   }
   
   boolean checkCollision(Earth earth) {
-    if (!isLaunched) return false;
-    
+    // 地球との当たり判定（発射前でも当たる）
     float distance = dist(x, y, earth.x, earth.y);
     float size = radius + chargeLevel * 5;
     return distance < (size + earth.radius);
+  }
+  
+  boolean checkCollisionWithMoon(Moon otherMoon) {
+    // 他の月との当たり判定
+    // 発射済みの月とのみ判定
+    if (!this.isLaunched && !otherMoon.isLaunched) return false;
+    
+    float distance = dist(x, y, otherMoon.x, otherMoon.y);
+    float thisSize = radius + chargeLevel * 5;
+    float otherSize = otherMoon.radius + otherMoon.chargeLevel * 5;
+    return distance < (thisSize + otherSize);
   }
 }

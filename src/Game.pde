@@ -229,7 +229,7 @@ class Game {
     textAlign(LEFT);
     textSize(14);
     text("Players alive: " + earths.size(), 10, 20);
-    text("M: Toggle Sound", 10, 40);
+    text("B: Toggle Sound", 10, 40);
   }
   
   void renderGameOver() {

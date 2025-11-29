@@ -257,10 +257,10 @@ class Game {
       float y = height/2 + i * 40;
       if (playerJoined[i]) {
         fill(getPlayerColor(i));
-        text("P" + (i+1) + " [" + Character.toUpperCase(playerKeys[i]) + "] - Joined!", width/2, y);
+        text(" [" + Character.toUpperCase(playerKeys[i]) + "] - Joined!", width/2, y);
       } else {
         fill(150);
-        text("P" + (i+1) + " [" + Character.toUpperCase(playerKeys[i]) + "] - Press to join", width/2, y);
+        text(" [" + Character.toUpperCase(playerKeys[i]) + "] - Press to join", width/2, y);
       }
     }
     

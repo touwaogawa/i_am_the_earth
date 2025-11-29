@@ -52,7 +52,7 @@ class Earth extends Planet {
     ellipse(x, y, radius * 2, radius * 2);
     
     // プレイヤー番号を縁取り文字で表示
-    drawOutlinedText("P" + (playerId + 1), x, y, 20, color(255), color(0), 3);
+    drawOutlinedText(Character.toUpperCase(controlKey) + "", x, y, 20, color(255), color(0), 3);
     
     // 月を描画
     moon.render();

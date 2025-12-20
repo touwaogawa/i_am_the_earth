@@ -14,6 +14,7 @@ class Mercury extends Planet {
   
   Mercury() {
     super(20, color(150, 150, 150), "Mercury", 150, 0.008, PI / 4);
+    this.nameKey = "MERCURY";
     this.hasWater = true;
     this.waterTimer = 0;
     this.waterRegenTime = 180; // 3秒（60fps × 3）

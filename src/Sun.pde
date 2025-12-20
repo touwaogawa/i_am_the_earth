@@ -53,7 +53,7 @@ class Sun extends CelestialBody {
     strokeWeight(2);
     textAlign(CENTER, CENTER);
     textSize(16);
-    text("Sun", x, y);
+    text(getLocalizedName(), x, y);
   }
   
   // 月に引力を加える

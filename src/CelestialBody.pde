@@ -17,6 +17,8 @@ abstract class CelestialBody {
   protected float radius;
   protected color bodyColor;
   protected String name;
+  protected String nameKey; // Language key for localized name
+  protected LanguageManager langManager;
   
   CelestialBody(float x, float y, float radius, color c, String name) {
     this.x = x;
@@ -24,6 +26,19 @@ abstract class CelestialBody {
     this.radius = radius;
     this.bodyColor = c;
     this.name = name;
+    this.nameKey = name; // Default to name as key
+    this.langManager = null;
+  }
+  
+  void setLanguageManager(LanguageManager lm) {
+    this.langManager = lm;
+  }
+  
+  String getLocalizedName() {
+    if (langManager != null && nameKey != null) {
+      return langManager.getText(nameKey);
+    }
+    return name;
   }
   
   abstract void update();

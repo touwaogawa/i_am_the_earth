@@ -14,6 +14,7 @@ class Venus extends Planet {
   
   Venus() {
     super(25, color(255, 200, 100), "Venus", 220, 0.006, PI * 3 / 4);
+    this.nameKey = "VENUS";
     this.hitCount = 0;
     this.maxHits = 3;
     this.isDestroyed = false;

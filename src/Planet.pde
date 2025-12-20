@@ -55,6 +55,6 @@ abstract class Planet extends CelestialBody {
     fill(255);
     textAlign(CENTER);
     textSize(10);
-    text(name, x, y + radius + 12);
+    text(getLocalizedName(), x, y + radius + 12);
   }
 }

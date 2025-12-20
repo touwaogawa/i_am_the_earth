@@ -14,6 +14,8 @@ void draw() {
 
 void keyPressed() {
   game.handleKeyPressed(key);
+  //if(key == 's')
+  //  save("screenshot.png");
 }
 
 void keyReleased() {

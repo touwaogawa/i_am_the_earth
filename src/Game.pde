@@ -319,7 +319,7 @@ class Game {
     textAlign(CENTER);
     textSize(48);
     if (winner >= 0) {
-      text("Player " + (winner + 1) + " Wins!", width/2, height/2);
+      text("Player " + Character.toUpperCase(playerKeys[winner]) + " Wins!", width/2, height/2);
     } else {
       text("Draw!", width/2, height/2);
     }

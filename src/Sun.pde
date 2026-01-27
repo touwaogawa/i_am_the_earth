@@ -14,6 +14,7 @@ class Sun extends CelestialBody {
   
   Sun(float x, float y, float radius) {
     super(x, y, radius, color(255, 200, 0), "Sun");
+    this.nameKey = "SUN";
     gravityStrength = 2500; // 引力の強さ（強化）
     gravityRange = 150; // 引力圏の範囲（水星の軌道くらい）
   }
@@ -53,7 +54,7 @@ class Sun extends CelestialBody {
     strokeWeight(2);
     textAlign(CENTER, CENTER);
     textSize(16);
-    text("Sun", x, y);
+    text(getLocalizedName(), x, y);
   }
   
   // 月に引力を加える

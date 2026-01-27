@@ -5,6 +5,7 @@ class Game {
   Mercury mercury;
   Venus venus;
   ParticleManager particleManager;
+  LanguageManager languageManager;
   
   // ゲーム状態
   GameState gameState;
@@ -28,6 +29,12 @@ class Game {
     mercury = new Mercury();
     venus = new Venus();
     particleManager = new ParticleManager();
+    languageManager = new LanguageManager();
+    
+    // Set language manager for celestial bodies
+    sun.setLanguageManager(languageManager);
+    mercury.setLanguageManager(languageManager);
+    venus.setLanguageManager(languageManager);
     
     gameState = GameState.TITLE;
     winner = -1;
@@ -247,20 +254,32 @@ class Game {
     fill(255);
     textAlign(CENTER);
     textSize(64);
-    text("I am the Earth", width/2, height/3);
+    text(languageManager.getText("GAME_TITLE"), width/2, height/3);
+    
+    // 言語切り替えボタン
+    fill(255);
+    stroke(255);
+    strokeWeight(2);
+    noFill();
+    rect(width - 80, 20, 60, 40);
+    fill(255);
+    textSize(20);
+    textAlign(CENTER);
+    text(languageManager.getText("LANGUAGE_TOGGLE"), width - 50, 48);
     
     // プレイヤー参加状態
     textSize(24);
+    textAlign(CENTER);
     // text("Press key to join:", width/2, height/2 - 60);
     
     for (int i = 0; i < 4; i++) {
       float y = height/2 + i * 40;
       if (playerJoined[i]) {
         fill(getPlayerColor(i));
-        text(" [" + Character.toUpperCase(playerKeys[i]) + "] - Joined!", width/2, y);
+        text(languageManager.getText("PLAYER_JOINED").replace("X", Character.toString(Character.toUpperCase(playerKeys[i]))), width/2, y);
       } else {
         fill(150);
-        text(" [" + Character.toUpperCase(playerKeys[i]) + "] - Press to join", width/2, y);
+        text(languageManager.getText("PLAYER_JOIN_PROMPT").replace("X", Character.toString(Character.toUpperCase(playerKeys[i]))), width/2, y);
       }
     }
     
@@ -273,15 +292,15 @@ class Game {
     if (joinedCount >= 2) {
       fill(255, 255, 0);
       textSize(32);
-      text("Press SPACE to Start!", width/2, height - 100);
+      text(languageManager.getText("START_INSTRUCTION"), width/2, height - 100);
       
       // SPACEキーについてのやかましい説明（吹き出し風）
       drawSpeechBubble(width/2 + 180, height - 200, 280, 80, 
-        "This space is not the space\nin the universe, but the\nspace on the keyboard.");
+        languageManager.getText("SPACE_KEY_BUBBLE"));
     } else {
       fill(150);
       textSize(20);
-      text("At least 2 players required", width/2, height - 100);
+      text(languageManager.getText("MIN_PLAYERS_REQUIRED"), width/2, height - 100);
     }
   }
   
@@ -307,8 +326,8 @@ class Game {
     fill(255);
     textAlign(LEFT);
     textSize(14);
-    text("Players alive: " + earths.size(), 10, 20);
-    text("B: Toggle Sound", 10, 40);
+    text(languageManager.getText("PLAYERS_ALIVE") + earths.size(), 10, 20);
+    text(languageManager.getText("SOUND_TOGGLE"), 10, 40);
   }
   
   void renderGameOver() {
@@ -319,12 +338,16 @@ class Game {
     textAlign(CENTER);
     textSize(48);
     if (winner >= 0) {
-      text("Player " + Character.toUpperCase(playerKeys[winner]) + " Wins!", width/2, height/2);
+      // For Japanese: プレイヤー X の勝利！, For English: Player X Wins!
+      String winText = languageManager.getText("PLAYER_WINS");
+      // Replace %d with player key
+      winText = winText.replace("%d", Character.toString(Character.toUpperCase(playerKeys[winner])));
+      text(winText, width/2, height/2);
     } else {
-      text("Draw!", width/2, height/2);
+      text(languageManager.getText("DRAW"), width/2, height/2);
     }
     textSize(24);
-    text("Press R to Restart", width/2, height/2 + 50);
+    text(languageManager.getText("RESTART_INSTRUCTION"), width/2, height/2 + 50);
   }
   
   void handleKeyPressed(char k) {
@@ -333,6 +356,12 @@ class Game {
     // サウンドのトグル
     if (k == 'b') {
       SoundManager.toggleSound();
+      return;
+    }
+    
+    // 言語切り替え (Lキー)
+    if (k == 'l') {
+      languageManager.toggleLanguage();
       return;
     }
     
@@ -379,6 +408,16 @@ class Game {
     }
   }
   
+  void handleMousePressed() {
+    // Check if language toggle button was clicked (only on title screen)
+    if (gameState == GameState.TITLE) {
+      // Button is at: x=width-80, y=20, width=60, height=40
+      if (mouseX >= width - 80 && mouseX <= width - 20 && mouseY >= 20 && mouseY <= 60) {
+        languageManager.toggleLanguage();
+      }
+    }
+  }
+  
   void startGame() {
     gameState = GameState.PLAYING;
     earths.clear();
@@ -399,7 +438,9 @@ class Game {
     for (int i = 0; i < playerCount; i++) {
       int playerId = joinedPlayerIds.get(i);
       float angleOffset = TWO_PI * i / playerCount; // 等間隔の角度オフセット
-      earths.add(new Earth(300, playerId, playerKeys[playerId], angleOffset));
+      Earth earth = new Earth(300, playerId, playerKeys[playerId], angleOffset);
+      earth.setLanguageManager(languageManager);
+      earths.add(earth);
     }
   }
   
@@ -409,6 +450,8 @@ class Game {
     earths.clear();
     mercury = new Mercury();
     venus = new Venus();
+    mercury.setLanguageManager(languageManager);
+    venus.setLanguageManager(languageManager);
     particleManager = new ParticleManager();
     
     // カメラをリセット

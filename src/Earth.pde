@@ -16,6 +16,7 @@ class Earth extends Planet {
 
   Earth(float orbitDistance, int playerId, char key, float angleOffset) {
     super(30, getPlayerColor(playerId), "Earth P" + (playerId + 1), orbitDistance, 0.01, angleOffset);
+    this.nameKey = "EARTH";
     this.playerId = playerId;
     this.controlKey = key;
     this.isDestroyed = false;
@@ -23,6 +24,15 @@ class Earth extends Planet {
     
     // 月を生成
     moon = new Moon(this);
+  }
+  
+  String getLocalizedName() {
+    if (langManager != null && nameKey != null) {
+      String template = langManager.getText(nameKey);
+      // Replace %d with player number (1-indexed)
+      return template.replace("%d", String.valueOf(playerId + 1));
+    }
+    return name;
   }
   
   void update() {
